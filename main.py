@@ -1,11 +1,9 @@
-from google.appengine.ext import webapp
+import webapp2
 
-
-class MainHandler(webapp.RequestHandler):
+class HelloWebapp2(webapp2.RequestHandler):
     def get(self):
-        self.response.out.write('Hello world!')
+        self.response.write('Hello, webapp2!')
 
-
-app = webapp.WSGIApplication([('/', MainHandler)],
-                             debug=True)
-
+app = webapp2.WSGIApplication([
+    ('/', HelloWebapp2),
+    ], debug=True)
