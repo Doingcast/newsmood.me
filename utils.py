@@ -66,3 +66,15 @@ def strip_tags(value):
             break
         value = new_value
     return value
+
+def get_mood(text, lang = 'eng'):
+    params = {
+        'text': text,
+        'apikey': HP_KEY,
+        'lang': lang
+    }
+    resp = requests.get(
+        "https://api.idolondemand.com/1/api/sync/analyzesentiment/v1",
+        params = params
+    )
+    return resp.json()
