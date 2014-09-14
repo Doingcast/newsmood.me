@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="assets/ico/favicon.ico">
+
+    <title>NewsMood.me - easy news sentiment analysis</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="assets/css/style.css" rel="stylesheet">
+    <link href="assets/css/font-awesome.min.css" rel="stylesheet">
+    <link href="assets/css/pace.css" rel="stylesheet">
+    <link href="assets/css/animate.css" rel="stylesheet">
+    <style type="text/css">
+    .bar.positive {
+      fill: steelblue;
+    }
+
+    .bar.negative {
+      fill: brown;
+    }
+
+    .axis text {
+      font: 10px sans-serif;
+    }
+
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+    </style>
+
+
+    <!-- Just for debugging purposes. Don't actually copy this line! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
+    <script src="assets/js/modernizr.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">NEWSMOOD.ME</a>
+        </div>
+        <div class="navbar-collapse collapse navbar-right">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="/">HOME</a></li>
+            <li><a href="https://github.com/ffreitasalves/hackdataweek" target="_blank">SOURCE</a></li>
+            <li><a href="http://dataweek.co/">DATAWEEK</a></li>
+            <li><a href="http://dataweek.co/hackathon/">HACKATHON</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">AUTHORS <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="http://fernandofreitasalves.com" target="_blank">FERNANDO FREITAS ALVES</a></li>
+                <li><a href="http://roberto.cr" target="_blank">ROBERTO CIVILLE RODRIGUES</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+
+	<!-- *****************************************************************************************************************
+	 HEADERWRAP
+	 ***************************************************************************************************************** -->
+	<div id="headerwrap" style="background-color: #0096D6; min-height: 450px;">
+	    <div class="container">
+			<div class="row">
+				<div class="col-lg-8 col-lg-offset-2">
+					<h1 class="bounceIn">News Mood</h1>
+					<h3>{{ slogan }}</h3>
+					<h5>Try searching for a person, company or any news subject</h5>
+					<p>&nbsp;</p>
+					<p>
+						<input id="query" type="text" class="form-control" placeholder="Search something" autocomplete="off"><br>
+						<a id="mood" class="btn btn-lg btn-theme" href="#" role="button">Mood</a>
+					</p>
+				</div>
+				<!-- <div class="col-lg-8 col-lg-offset-2 himg">
+					<img src="assets/img/browser.png" class="img-responsive">
+				</div> -->
+			</div><!-- /row -->
+	    </div> <!-- /container -->
+	</div><!-- /headerwrap -->
+
+<!-- *****************************************************************************************************************
+	 RESULTS
+	 ***************************************************************************************************************** -->
+	 <div id="results">
+	 <div id="twrap" class="hide">
+	 	<div class="container centered">
+	 		<div class="row">
+	 			<div class="col-lg-8 col-lg-offset-2">
+	 			</div>
+	 		</div><! --/row -->
+	 		<div id="chart">
+	 		</div>
+	 		<div class="row">
+	 			<div class="col-lg-8 col-lg-offset-2">
+	 				News
+	 			</div>
+	 		</div><! --/row -->
+	 		<div class="row">
+	 			<div id="resultslist"></div>
+	 		</div><! --/row -->
+	 	</div><! --/container -->
+	 </div><! --/twrap -->
+	 </div>
+
+
+	<!-- *****************************************************************************************************************
+	 SERVICE LOGOS
+	 ***************************************************************************************************************** -->
+	 <div id="service">
+	 	<div class="container">
+ 			<div class="row centered">
+ 				<div class="col-md-4">
+ 					<i class="fa fa-heart-o"></i>
+ 					<h4>People</h4>
+ 					<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+ 					<p><br/><a href="#" class="btn btn-theme">More Info</a></p>
+ 				</div>
+ 				<div class="col-md-4">
+ 					<i class="fa fa-flask"></i>
+ 					<h4>Companies</h4>
+ 					<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+ 					<p><br/><a href="#" class="btn btn-theme">More Info</a></p>
+ 				</div>
+ 				<div class="col-md-4">
+ 					<i class="fa fa-trophy"></i>
+ 					<h4>History</h4>
+ 					<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+ 					<p><br/><a href="#" class="btn btn-theme">More Info</a></p>
+ 				</div>		 				
+	 		</div>
+	 	</div><! --/container -->
+	 </div><! --/service -->
+
+
+	<!-- *****************************************************************************************************************
+	 MIDDLE CONTENT
+	 ***************************************************************************************************************** -->
+
+	 <div class="container mtb">
+	 	<div class="row">
+	 		<div class="col-lg-8 col-lg-offset-2">
+		 		<h4>How does it work?</h4>
+		 		<p>
+		 			We make extensive use of <a href="https://www.idolondemand.com" target="_blank">HP IDOL OnDemand</a>, the human information API platform.<br>
+		 			First, we use the <a href="https://www.idolondemand.com/developer/apis/querytextindex" target="_blank">Query Text Index API</a> to search news from a given index (<i>news_eng</i>). We then scrape those news and get only the relevant content, which we send to the <a href="https://www.idolondemand.com/developer/apis/analyzesentiment" target="_blank">Sentiment Analysis API</a> to check if the general mood of the news is positive or negative.<br>
+		 			Then, we just use a <a href="http://d3js.org/" target="_blank">D3.js</a> plugin to better visualize the data.<br>
+		 		</p>
+		 		<p>
+		 			This is not only the easiest to use news sentiment analytics webapp out there, it's source is available as a pretty straightforward way to learn how to use the <a href="https://www.idolondemand.com/developer/apis" target="_blank">HP IDOL OnDemand APIs</a> and play with Big Data in no time.<br>
+		 			Enjoy!<br>
+		 			<br>
+		 			<a href="https://github.com/ffreitasalves/hackdataweek" target="_blank" class="btn btn-theme">View Source</a>
+		 		</p>
+	 		</div>
+	 		
+	 	</div><! --/row -->
+	 </div><! --/container -->
+	 
+	 
+	<!-- *****************************************************************************************************************
+	 FOOTER
+	 ***************************************************************************************************************** -->
+	 <div id="footerwrap">
+	 	<div class="container">
+		 	<div class="row">
+		 		<div class="col-lg-4">
+		 			<h4>About</h4>
+		 			<div class="hline-w"></div>
+		 			<p>NewsMood.me is a news sentiment analyzer which makes extensive use of <a href="https://www.idolondemand.com" target="_blank">HP IDOL OnDemand</a>, made on the <a href="http://dataweek.co/hackathon/" target="_blank">DataWeek + API World 2014 Hackathon<a></p>
+		 		</div>
+		 		<div class="col-lg-4">
+		 			<h4>Social Links</h4>
+		 			<div class="hline-w"></div>
+		 			<p>
+		 				<a href="http://facebook.com/robertocrbr" target="_blank"><i class="fa fa-facebook"></i></a>
+		 				<a href="http://twitter.com/robertocr" target="_blank"><i class="fa fa-twitter"></i></a>
+		 			</p>
+		 		</div>
+		 		<div class="col-lg-4">
+		 			<h4>Who?</h4>
+		 			<div class="hline-w"></div>
+		 			<p>
+		 				<a href="http://fernandofreitasalves.com" target="_blank">Fernando Freitas Alves<br/>
+		 				<a href="http://roberto.cr" target="_blank">Roberto Civille Rodrigues
+		 			</p>
+		 		</div>
+		 	
+		 	</div><! --/row -->
+	 	</div><! --/container -->
+	 </div><! --/footerwrap -->
+	 
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+	<script src="assets/js/retina-1.1.0.js"></script>
+	<script src="assets/js/jquery.hoverdir.js"></script>
+	<script src="assets/js/jquery.hoverex.min.js"></script>
+	<script src="assets/js/jquery.prettyPhoto.js"></script>
+  	<script src="assets/js/jquery.isotope.min.js"></script>
+  	<script src="assets/js/custom.js"></script>
+
+  	<!-- <script src="http://d3js.org/d3.v3.min.js"></script> -->
+  	<script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
+
+  	<script src="assets/js/pace.min.js"></script>
+
+
+    <script>
+(function($) {
+	$("#query").focus();
+	// when Enter is pressed
+	$("#query").keypress(function(event) {
+		// blank query check
+		if(event.which == 13) {
+			if($("#query").val()==""){
+				alert("Please insert a query text.")
+				return false
+			}
+			// it's as if clicking the mood button
+			$("#mood").click()
+		}
+	});
+
+	// when the mood button is pressed
+	$("#mood").click(function(event) {
+		event.preventDefault();
+
+		// blank query check
+		if(event.which == 13) {
+			if($("#query").val()==""){
+				alert("Please insert a query text.")
+				return false
+			}
+		}
+
+		$("#mood").addClass('bounce')
+
+		$.ajax({
+			type: "POST",
+			url: "/search",
+			data: {
+				query: $("#query").val()
+			}
+		}).done(function(data) {
+			console.log( data );
+			$("#twrap").addClass('fadeIn').removeClass('hide');
+
+			// data = [
+			//   {
+			//     "sentiment": "positive",
+			//     "title": "Apple welcomes back top Bitcoin wallet app",
+			//     "url": "http:\/\/rss.cnn.com\/~r\/rss\/money_latest\/~3\/AmOvpxJLXU4\/index.html",
+			//     "score": 0.18794991062571
+			//   },
+			//   {
+			//     "sentiment": "positive",
+			//     "title": "Apple and IBM to co-develop apps",
+			//     "url": "http:\/\/www.bbc.co.uk\/news\/technology-28321897#sa-ns_mchannel=rss&ns_source=PublicRSS20-sa",
+			//     "score": 0.65855428929224
+			//   },
+			//   {
+			//     "sentiment": "negative",
+			//     "title": "Apple loses China patent case, separate suit against Apple continues",
+			//     "url": "http:\/\/feeds.reuters.com\/~r\/reuters\/technologyNews\/~3\/KVRlUyq0Mrs\/story01.htm",
+			//     "score": -0.41729506047072
+			//   },
+			//   {
+			//     "sentiment": "negative",
+			//     "title": "Apple loses China patent case, separate suit against Apple continues",
+			//     "url": "http:\/\/feeds.reuters.com\/~r\/reuters\/businessNews\/~3\/NWR-H9Efj4g\/story01.htm",
+			//     "score": -0.41729506047072
+			//   },
+			//   {
+			//     "sentiment": "positive",
+			//     "title": "Bits Blog: A New Era for Apple, but an End for Some Apps",
+			//     "url": "http:\/\/rss.nytimes.com\/c\/34625\/f\/640387\/s\/3b1d6ad5\/sc\/15\/l\/0Lbits0Bblogs0Bn\u2026apple0Ebut0Ean0Eend0Efor0Esome0Eapps0C0Dpartner0Frss0Gemc0Frss\/story01.htm",
+			//     "score": 0.18608143635051
+			//   },
+			//   {
+			//     "sentiment": "positive",
+			//     "title": "Apple apps made to run on Android",
+			//     "url": "http:\/\/www.bbc.co.uk\/news\/technology-27470920#sa-ns_mchannel=rss&ns_source=PublicRSS20-sa",
+			//     "score": 0.19561872074174
+			//   }
+			// ]
+
+			var cleanData = [];
+			for (var i = 0; i < data.length; i++) {
+				// data[i]
+				cleanData.push({
+					"name": i,
+					"value": data[i].score
+				})
+
+				// sentiment, title, url, score, summary
+				$('#resultslist').append("<b><a href='"+data[i].url+"' target='_blank'>"+data[i].title+"</a></b> <i>"+data[i].score+" ("+data[i].sentiment+")</i><br>"+data[i].summary)
+
+			};
+
+			// cleanData = [{"name":"A","value":+1.1914506597992949},{"name":"B","value":0.05927993788460987},{"name":"C","value":-0.18737419641881728},{"name":"D","value":-0.2259876953300235},{"name":"E","value":-0.2259876953300235},{"name":"F","value":-0.18737419641881728}];
+			plotMood(cleanData);
+
+			// scroll
+			var target = "#results",
+			$target = $(target);
+			$('html, body').stop().animate({
+				        'scrollTop': $target.offset().top
+				    }, 900, 'swing', function () {
+				        window.location.hash = target;
+				    });
+
+		}).error(function() {
+			$("#twrap").addClass('fadeIn').removeClass('hide')
+			
+			var target = "#results",
+			$target = $(target);
+			$('html, body').stop().animate({
+				        'scrollTop': $target.offset().top
+				    }, 900, 'swing', function () {
+				        window.location.hash = target;
+				    });
+		});;
+	});
+
+})(jQuery);
+
+
+
+
+// http://bl.ocks.org/mbostock/2368837
+function plotMood(cleanData){
+	$("#chart svg").remove()
+	console.log("plotting cleanData")
+	console.log(cleanData)
+	// (function($) {
+		var margin = {top: 30, right: 10, bottom: 10, left: 10},
+		    width = 960 - margin.left - margin.right,
+		    height = 500 - margin.top - margin.bottom;
+
+		var x = d3.scale.linear()
+		    .range([0, width])
+
+		var y = d3.scale.ordinal()
+		    .rangeRoundBands([0, height], .2);
+
+		var xAxis = d3.svg.axis()
+		    .scale(x)
+		    .orient("top");
+
+		var svg = d3.select("#chart").append("svg")
+		    .attr("width", width + margin.left + margin.right)
+		    .attr("height", height + margin.top + margin.bottom)
+		  .append("g")
+		    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+		// d3.tsv("/assets/data.tsv", type, function(error, data) {
+		// [{"name":"A","value":-0.1914506597992949},{"name":"B","value":0.05927993788460987},{"name":"C","value":-0.18737419641881728},{"name":"D","value":-0.2259876953300235},{"name":"E","value":-0.2259876953300235},{"name":"F","value":-0.18737419641881728}]
+
+		// cleanData = [{"name":"A","value":-0.1914506597992949},{"name":"B","value":0.05927993788460987},{"name":"C","value":-0.18737419641881728},{"name":"D","value":-0.2259876953300235},{"name":"E","value":-0.2259876953300235},{"name":"F","value":-0.18737419641881728}]
+		  x.domain(d3.extent(cleanData, function(d) { return d.value; })).nice();
+		  y.domain(cleanData.map(function(d) { return d.name; }));
+
+		  svg.selectAll(".bar")
+		      .data(cleanData)
+		    .enter().append("rect")
+		      .attr("class", function(d) { return d.value < 0 ? "bar negative" : "bar positive"; })
+		      .attr("x", function(d) { return x(Math.min(0, d.value)); })
+		      .attr("y", function(d) { return y(d.name); })
+		      .attr("width", function(d) { return Math.abs(x(d.value) - x(0)); })
+		      .attr("height", y.rangeBand());
+
+		  svg.append("g")
+		      .attr("class", "x axis")
+		      .call(xAxis);
+
+		  svg.append("g")
+		      .attr("class", "y axis")
+		    .append("line")
+		      .attr("x1", x(0))
+		      .attr("x2", x(0))
+		      .attr("y2", height);
+
+		// });
+
+		function type(d) {
+		  d.value = +d.value;
+		  return d;
+		}
+	// })(jQuery);
+}
+
+
+
+
+
+
+
+
+// Portfolio
+(function($) {
+	"use strict";
+	var $container = $('.portfolio'),
+		$items = $container.find('.portfolio-item'),
+		portfolioLayout = 'fitRows';
+		
+		if( $container.hasClass('portfolio-centered') ) {
+			portfolioLayout = 'masonry';
+		}
+				
+		$container.isotope({
+			filter: '*',
+			animationEngine: 'best-available',
+			layoutMode: portfolioLayout,
+			animationOptions: {
+			duration: 750,
+			easing: 'linear',
+			queue: false
+		},
+		masonry: {
+		}
+		}, refreshWaypoints());
+		
+		function refreshWaypoints() {
+			setTimeout(function() {
+			}, 1000);   
+		}
+				
+		$('nav.portfolio-filter ul a').on('click', function() {
+				var selector = $(this).attr('data-filter');
+				$container.isotope({ filter: selector }, refreshWaypoints());
+				$('nav.portfolio-filter ul a').removeClass('active');
+				$(this).addClass('active');
+				return false;
+		});
+		
+		function getColumnNumber() { 
+			var winWidth = $(window).width(), 
+			columnNumber = 1;
+		
+			if (winWidth > 1200) {
+				columnNumber = 5;
+			} else if (winWidth > 950) {
+				columnNumber = 4;
+			} else if (winWidth > 600) {
+				columnNumber = 3;
+			} else if (winWidth > 400) {
+				columnNumber = 2;
+			} else if (winWidth > 250) {
+				columnNumber = 1;
+			}
+				return columnNumber;
+			}       
+			
+			function setColumns() {
+				var winWidth = $(window).width(), 
+				columnNumber = getColumnNumber(), 
+				itemWidth = Math.floor(winWidth / columnNumber);
+				
+				$container.find('.portfolio-item').each(function() { 
+					$(this).css( { 
+					width : itemWidth + 'px' 
+				});
+			});
+		}
+		
+		function setPortfolio() { 
+			setColumns();
+			$container.isotope('reLayout');
+		}
+			
+		$container.imagesLoaded(function () { 
+			setPortfolio();
+		});
+		
+		$(window).on('resize', function () { 
+		setPortfolio();          
+	});
+})(jQuery);
+
+
+
+
+
+// http://wibblystuff.blogspot.com/2014/04/in-page-smooth-scroll-using-css3.html
+// Smooth scroll for in page links
+$(function(){
+    var target, scroll;
+
+    $("a[href*=#]:not([href=#])").on("click", function(e) {
+        if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {
+            target = $(this.hash);
+            target = target.length ? target : $("[id=" + this.hash.slice(1) + "]");
+
+            if (target.length) {
+                if (typeof document.body.style.transitionProperty === 'string') {
+                    e.preventDefault();
+                  
+                    var avail = $(document).height() - $(window).height();
+
+                    scroll = target.offset().top;
+                  
+                    if (scroll > avail) {
+                        scroll = avail;
+                    }
+
+                    $("html").css({
+                        "margin-top" : ( $(window).scrollTop() - scroll ) + "px",
+                        "transition" : "1s ease-in-out"
+                    }).data("transitioning", true);
+                } else {
+                    $("html, body").animate({
+                        scrollTop: scroll
+                    }, 1000);
+                    return;
+                }
+            }
+        }
+    });
+
+    $("html").on("transitionend webkitTransitionEnd msTransitionEnd oTransitionEnd", function (e) {
+        if (e.target == e.currentTarget && $(this).data("transitioning") === true) {
+            $(this).removeAttr("style").data("transitioning", false);
+            $("html, body").scrollTop(scroll);
+            return;
+        }
+    });
+});
+</script>
+  </body>
+</html>
