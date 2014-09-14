@@ -25,7 +25,7 @@ We used HP IDOL On Demand Query Text Index to search for related news about a su
 
 Where
 ----
-DataWeek Data + API Hackathon 2014
+DataWeek - Data + API Hackathon 2014
 
 Who
 ----
