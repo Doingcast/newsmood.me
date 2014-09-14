@@ -1,22 +1,25 @@
 import webapp2
-from utils import get_news_mood
+from webapp2_extras import jinja2
 import json
+from utils import get_news_mood, BaseHandler
 
-class HelloWebapp2(webapp2.RequestHandler):
+class RootHandler(BaseHandler):
     def get(self):
-        self.response.write('Hello, webapp2!')
+        context = {'slogan': 'Extract and visualize sentiment from news'}
+        self.render_response('index.html', **context)
 
-class GetJson(webapp2.RequestHandler):
-    def get(self):
-        text = self.request.get('text')
-        if text:
-            resp = get_news_mood(text)
+class SearchHandler(BaseHandler):
+    def post(self):
+        query = self.request.get('query')
+        if query:
+            resp = get_news_mood(query)
         else:
             resp = ""
 
+        self.response.headers['Content-Type'] = 'application/json'
         self.response.write(json.dumps(resp))
 
 app = webapp2.WSGIApplication([
-    ('/', HelloWebapp2),
-    ('/get', GetJson),
+    ('/', RootHandler),
+    ('/search', SearchHandler),
     ], debug=True)
