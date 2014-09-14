@@ -1,5 +1,6 @@
 import requests
 from datetime import date, timedelta
+from HTMLParser import HTMLParser
 
 HP_KEY = '08002bd7-6107-41a6-8aef-d067dc823d70'
 PARSER_TOKEN = '841f04fafb770c310d4aa9876a10a155ea922817'
@@ -30,3 +31,38 @@ def parser_main_content(url):
     )
 
     return resp.json()
+
+class MLStripper(HTMLParser):
+    def __init__(self):
+        HTMLParser.__init__(self)
+        self.reset()
+        self.fed = []
+    def handle_data(self, d):
+        self.fed.append(d)
+    def handle_entityref(self, name):
+        self.fed.append('&%s;' % name)
+    def handle_charref(self, name):
+        self.fed.append('&#%s;' % name)
+    def get_data(self):
+        return ''.join(self.fed)
+
+def _strip_once(value):
+    """
+    Internal tag stripping utility used by strip_tags.
+    """
+    s = MLStripper()
+    s.feed(value)
+    s.close()
+    return s.get_data()
+
+def strip_tags(value):
+    """Returns the given HTML with all tags stripped."""
+    # Note: in typical case this loop executes _strip_once once. Loop condition
+    # is redundant, but helps to reduce number of executions of _strip_once.
+    while '<' in value and '>' in value:
+        new_value = _strip_once(value)
+        if new_value == value:
+            # _strip_once was not able to detect more tags
+            break
+        value = new_value
+    return value
