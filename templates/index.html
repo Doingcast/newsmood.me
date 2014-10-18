@@ -8,7 +8,7 @@
     <meta name="author" content="">
     <link rel="shortcut icon" href="assets/ico/favicon.ico">
 
-    <title>NewsMood.me - easy news sentiment analysis</title>
+    <title>{% if q %}{{ q }} - {% endif %}NewsMood.me - easy news sentiment analysis</title>
 
     <!-- Bootstrap core CSS -->
     <link href="assets/css/bootstrap.css" rel="stylesheet">
@@ -37,6 +37,12 @@
       stroke: #000;
       shape-rendering: crispEdges;
     }
+
+
+
+    .highlight {
+        background-color: #6666FF;
+    }
     </style>
 
 
@@ -50,6 +56,17 @@
     <![endif]-->
     
     <script src="assets/js/modernizr.js"></script>
+
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-54825206-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
   </head>
 
   <body>
@@ -120,11 +137,6 @@
 	 		<div id="chart">
 	 		</div>
 	 		<div class="row">
-	 			<div class="col-lg-8 col-lg-offset-2">
-	 				News
-	 			</div>
-	 		</div><! --/row -->
-	 		<div class="row">
 	 			<div id="resultslist"></div>
 	 		</div><! --/row -->
 	 	</div><! --/container -->
@@ -139,22 +151,22 @@
 	 	<div class="container">
  			<div class="row centered">
  				<div class="col-md-4">
- 					<i class="fa fa-heart-o"></i>
+ 					<i class="fa fa-user"></i>
  					<h4>People</h4>
- 					<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
- 					<p><br/><a href="#" class="btn btn-theme">More Info</a></p>
+ 					<p>Try searching for artists, athletes, celebrities and find what's the mood of their recent news!</p>
+ 					<p><br/></p>
  				</div>
  				<div class="col-md-4">
- 					<i class="fa fa-flask"></i>
+ 					<i class="fa fa-building-o"></i>
  					<h4>Companies</h4>
- 					<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
- 					<p><br/><a href="#" class="btn btn-theme">More Info</a></p>
+ 					<p>Get insights about what's going on with a company. Great for investors!</p>
+ 					<p><br/></p>
  				</div>
  				<div class="col-md-4">
- 					<i class="fa fa-trophy"></i>
+ 					<i class="fa fa-book"></i>
  					<h4>History</h4>
- 					<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
- 					<p><br/><a href="#" class="btn btn-theme">More Info</a></p>
+ 					<p>Search for historic events and get a clear view of the latest news about it.</p>
+ 					<p><br/></p>
  				</div>		 				
 	 		</div>
 	 	</div><! --/container -->
@@ -173,6 +185,7 @@
 		 			We make extensive use of <a href="https://www.idolondemand.com" target="_blank">HP IDOL OnDemand</a>, the human information API platform.<br>
 		 			First, we use the <a href="https://www.idolondemand.com/developer/apis/querytextindex" target="_blank">Query Text Index API</a> to search news from a given index (<i>news_eng</i>). We then scrape those news and get only the relevant content, which we send to the <a href="https://www.idolondemand.com/developer/apis/analyzesentiment" target="_blank">Sentiment Analysis API</a> to check if the general mood of the news is positive or negative.<br>
 		 			Then, we just use a <a href="http://d3js.org/" target="_blank">D3.js</a> plugin to better visualize the data.<br>
+		 			Everything runs on <a href="https://developers.google.com/appengine/" target="_blank">Google App Engine</a>, which is part of <a href="https://cloud.google.com/" target="_blank">Google Cloud Platform</a>.
 		 		</p>
 		 		<p>
 		 			This is not only the easiest to use news sentiment analytics webapp out there, it's source is available as a pretty straightforward way to learn how to use the <a href="https://www.idolondemand.com/developer/apis" target="_blank">HP IDOL OnDemand APIs</a> and play with Big Data in no time.<br>
@@ -232,6 +245,7 @@
 
   	<!-- <script src="http://d3js.org/d3.v3.min.js"></script> -->
   	<script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
+  	<script src="assets/js/jquery.highlight.js"></script>
 
   	<script src="assets/js/pace.min.js"></script>
 
@@ -239,6 +253,7 @@
     <script>
 (function($) {
 	$("#query").focus();
+
 	// when Enter is pressed
 	$("#query").keypress(function(event) {
 		// blank query check
@@ -256,6 +271,8 @@
 	$("#mood").click(function(event) {
 		event.preventDefault();
 
+		Pace.restart()
+
 		// blank query check
 		if(event.which == 13) {
 			if($("#query").val()==""){
@@ -264,94 +281,99 @@
 			}
 		}
 
+		// change address bar URL
+		var stateObj = {};
+		window.history.pushState(stateObj, $("#query").val()+' - NewsMood.me - easy news sentiment analysis', '/?q='+$("#query").val());
+
 		$("#mood").addClass('bounce')
 
-		$.ajax({
-			type: "POST",
-			url: "/search",
-			data: {
-				query: $("#query").val()
-			}
-		}).done(function(data) {
-			console.log( data );
-			$("#twrap").addClass('fadeIn').removeClass('hide');
+		Pace.track(function(){
+			$.ajax({
+				type: "POST",
+				url: "/search",
+				data: {
+					query: $("#query").val()
+				}
+			}).done(function(data) {
+				console.log( data );
+				$("#twrap").addClass('fadeIn').removeClass('hide');
+				$("#resultslist").html('');
 
-			// data = [
-			//   {
-			//     "sentiment": "positive",
-			//     "title": "Apple welcomes back top Bitcoin wallet app",
-			//     "url": "http:\/\/rss.cnn.com\/~r\/rss\/money_latest\/~3\/AmOvpxJLXU4\/index.html",
-			//     "score": 0.18794991062571
-			//   },
-			//   {
-			//     "sentiment": "positive",
-			//     "title": "Apple and IBM to co-develop apps",
-			//     "url": "http:\/\/www.bbc.co.uk\/news\/technology-28321897#sa-ns_mchannel=rss&ns_source=PublicRSS20-sa",
-			//     "score": 0.65855428929224
-			//   },
-			//   {
-			//     "sentiment": "negative",
-			//     "title": "Apple loses China patent case, separate suit against Apple continues",
-			//     "url": "http:\/\/feeds.reuters.com\/~r\/reuters\/technologyNews\/~3\/KVRlUyq0Mrs\/story01.htm",
-			//     "score": -0.41729506047072
-			//   },
-			//   {
-			//     "sentiment": "negative",
-			//     "title": "Apple loses China patent case, separate suit against Apple continues",
-			//     "url": "http:\/\/feeds.reuters.com\/~r\/reuters\/businessNews\/~3\/NWR-H9Efj4g\/story01.htm",
-			//     "score": -0.41729506047072
-			//   },
-			//   {
-			//     "sentiment": "positive",
-			//     "title": "Bits Blog: A New Era for Apple, but an End for Some Apps",
-			//     "url": "http:\/\/rss.nytimes.com\/c\/34625\/f\/640387\/s\/3b1d6ad5\/sc\/15\/l\/0Lbits0Bblogs0Bn\u2026apple0Ebut0Ean0Eend0Efor0Esome0Eapps0C0Dpartner0Frss0Gemc0Frss\/story01.htm",
-			//     "score": 0.18608143635051
-			//   },
-			//   {
-			//     "sentiment": "positive",
-			//     "title": "Apple apps made to run on Android",
-			//     "url": "http:\/\/www.bbc.co.uk\/news\/technology-27470920#sa-ns_mchannel=rss&ns_source=PublicRSS20-sa",
-			//     "score": 0.19561872074174
-			//   }
-			// ]
+				// data = [
+				//   {
+				//     "sentiment": "positive",
+				//     "title": "Apple welcomes back top Bitcoin wallet app",
+				//     "url": "http:\/\/rss.cnn.com\/~r\/rss\/money_latest\/~3\/AmOvpxJLXU4\/index.html",
+				//     "score": 0.18794991062571
+				//   },
+				//   {
+				//     "sentiment": "positive",
+				//     "title": "Apple and IBM to co-develop apps",
+				//     "url": "http:\/\/www.bbc.co.uk\/news\/technology-28321897#sa-ns_mchannel=rss&ns_source=PublicRSS20-sa",
+				//     "score": 0.65855428929224
+				//   },
+				//   {
+				//     "sentiment": "negative",
+				//     "title": "Apple loses China patent case, separate suit against Apple continues",
+				//     "url": "http:\/\/feeds.reuters.com\/~r\/reuters\/technologyNews\/~3\/KVRlUyq0Mrs\/story01.htm",
+				//     "score": -0.41729506047072
+				//   },
+				//   {
+				//     "sentiment": "negative",
+				//     "title": "Apple loses China patent case, separate suit against Apple continues",
+				//     "url": "http:\/\/feeds.reuters.com\/~r\/reuters\/businessNews\/~3\/NWR-H9Efj4g\/story01.htm",
+				//     "score": -0.41729506047072
+				//   },
+				//   {
+				//     "sentiment": "positive",
+				//     "title": "Bits Blog: A New Era for Apple, but an End for Some Apps",
+				//     "url": "http:\/\/rss.nytimes.com\/c\/34625\/f\/640387\/s\/3b1d6ad5\/sc\/15\/l\/0Lbits0Bblogs0Bn\u2026apple0Ebut0Ean0Eend0Efor0Esome0Eapps0C0Dpartner0Frss0Gemc0Frss\/story01.htm",
+				//     "score": 0.18608143635051
+				//   },
+				//   {
+				//     "sentiment": "positive",
+				//     "title": "Apple apps made to run on Android",
+				//     "url": "http:\/\/www.bbc.co.uk\/news\/technology-27470920#sa-ns_mchannel=rss&ns_source=PublicRSS20-sa",
+				//     "score": 0.19561872074174
+				//   }
+				// ]
 
-			var cleanData = [];
-			for (var i = 0; i < data.length; i++) {
-				// data[i]
-				cleanData.push({
-					"name": i,
-					"value": data[i].score
-				})
+				var cleanData = [];
+				for (var i = 0; i < data.length; i++) {
+					// data[i]
+					cleanData.push({
+						"name": i,
+						"value": data[i].score
+					})
 
-				// sentiment, title, url, score, summary
-				$('#resultslist').append("<b><a href='"+data[i].url+"' target='_blank'>"+data[i].title+"</a></b> <i>"+data[i].score+" ("+data[i].sentiment+")</i><br>"+data[i].summary)
+					// sentiment, title, url, score, summary
+					$('#resultslist').append("<p><h3><i style='font-size: 24px;'>"+data[i].title+"</i></h3> <span style='color:white'>"+data[i].summary+" ("+data[i].score.toFixed(3)+", "+data[i].sentiment+")</span> Read more: <a href='"+data[i].url+"' target='_blank'><img src='/assets/img/iconmonstr-newspaper-3-icon-24.png'></a></p>")
 
-			};
+					$("#resultslist").highlight( $("#query").val() );
 
-			// cleanData = [{"name":"A","value":+1.1914506597992949},{"name":"B","value":0.05927993788460987},{"name":"C","value":-0.18737419641881728},{"name":"D","value":-0.2259876953300235},{"name":"E","value":-0.2259876953300235},{"name":"F","value":-0.18737419641881728}];
-			plotMood(cleanData);
+				};
 
-			// scroll
-			var target = "#results",
-			$target = $(target);
-			$('html, body').stop().animate({
-				        'scrollTop': $target.offset().top
-				    }, 900, 'swing', function () {
-				        window.location.hash = target;
-				    });
+				// cleanData = [{"name":"A","value":+1.1914506597992949},{"name":"B","value":0.05927993788460987},{"name":"C","value":-0.18737419641881728},{"name":"D","value":-0.2259876953300235},{"name":"E","value":-0.2259876953300235},{"name":"F","value":-0.18737419641881728}];
+				plotMood(cleanData);
 
-		}).error(function() {
-			$("#twrap").addClass('fadeIn').removeClass('hide')
-			
-			var target = "#results",
-			$target = $(target);
-			$('html, body').stop().animate({
-				        'scrollTop': $target.offset().top
-				    }, 900, 'swing', function () {
-				        window.location.hash = target;
-				    });
-		});;
+				// scroll
+				var target = "#results",
+				$target = $(target);
+				$('html, body').stop().animate({
+					        'scrollTop': $target.offset().top
+					    }, 900, 'swing', function () {
+					        window.location.hash = target;
+					    });
+			}).error(function() {
+				alert('Check your internet connection and try again.')
+			});
+		});
 	});
+	
+	{% if q %}
+	$("#query").val('{{ q }}');
+	$("#mood").click();
+	{% endif %}
 
 })(jQuery);
 
@@ -360,7 +382,7 @@
 
 // http://bl.ocks.org/mbostock/2368837
 function plotMood(cleanData){
-	$("#chart svg").remove()
+	$("#chart svg").remove();
 	console.log("plotting cleanData")
 	console.log(cleanData)
 	// (function($) {

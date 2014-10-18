@@ -1,9 +1,18 @@
 application: hackdataweek
-version: 1
+version: 3
 runtime: python27
 api_version: 1
 threadsafe: true
+module: default
+
+libraries:
+- name: webapp2
+  version: latest
+- name: jinja2
+  version: latest
 
 handlers:
+- url: /assets
+  static_dir: assets
 - url: /.*
   script: main.app
